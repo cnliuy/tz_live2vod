@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />	
+		<meta http-equiv="Content-Type" content="1280*720;text/html; charset=UTF-8" />	
+		<title>Blue</title>
+		<meta name="author" content="liuy" />		
+		<link rel="stylesheet" type="text/css" href="csss1/default.css" />
+		<link rel="stylesheet" type="text/css" href="csss1/component.css" />
+		<script src="jss1/modernizr.custom.js"></script>
+		<script src="view/js/index.js"></script>
+	</head>
+	<!-- 
+	<body class="cbp-spmenu-push"> 
+	-->
+	<body>
+	<div>
+		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
+			<h3>菜单</h3>
+			<a href="#">中央1</a>
+			<a href="#" onclick="prepareProgramly('CCTV-1','6')">中央1</a>
+			<a href="#" onclick="prepareProgramly('CCTV-2','13')">中央2</a>
+			<a href="#" onclick="prepareProgramly('CCTV-3','11')">中央3</a>
+			<a href="#" onclick="prepareProgramly('CCTV-4','12')">中央4</a>
+			<a href="#" onclick="prepareProgramly('CCTV-5HD','419')">中央5高清</a>
+			<a href="#" onclick="prepareProgramly('CCTV-6HD','421')">中央6高清</a>
+
+		</nav>
+		
+		<div class="container">
+			<div class="main">
+				<section>
+					<!-- <h2>Slide Menus</h2>  -->					
+					<!-- Class "cbp-spmenu-open" gets applied to menu -->
+					<button id="showLeft">侧边栏</button>
+				</section>
+			</div>
+		</div>
+	</div>	
+		<script src="jss1/classie.js"></script>
+		<script>
+			var menuLeft = document.getElementById( 'cbp-spmenu-s1' ),		
+				body = document.body;
+			alert(body);
+			showLeft.onclick = function() {
+				classie.toggle( this, 'active' );
+				classie.toggle( menuLeft, 'cbp-spmenu-open' );
+				//disableOther( 'showLeft' );
+			};
+			//function disableOther( button ) {
+			//	if( button !== 'showLeft' ) {
+			//		classie.toggle( showLeft, 'disabled' );
+			//	}				
+			//}
+		</script>		
+	</body>
+</html>

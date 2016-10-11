@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+
+<title>回放_退出</title>
+
+<link href="css/base.css" rel="stylesheet" type="text/css" />
+
+<script src="js/common.js"></script>
+
+<script type="text/javascript">
+//var newListFlag = getGlobalVar("newListFlag");//新闻中的拆条类型
+//var VODType=getGlobalVar("VODType");//播放的节目类型 vod tv news
+
+var isCloseWindow = false;
+var iCount = 10;
+var countTimer;
+var errorCode = 0;
+var mp = new MediaPlayer();
+var isStop = true;
+function initPage() {
+	var nativePlayerInstanceId = getGlobalVar("nativePlayerInstanceId");
+	mp.bindNativePlayerInstance(nativePlayerInstanceId);
+	errorCode = getIntValue(getQueryStr("errorCode", LocString));
+	var reasonCode = getGlobalVar("reasonCode");
+	reasonCode = (reasonCode == null) ? "": reasonCode;
+	$("checkoutContent").style.display = "block";
+	var tip = "";
+	var colseTip = "【确认】关闭";
+	switch (errorCode) {
+	case 1:
+		var rCode = getIntValue(reasonCode);
+		switch (rCode) {
+		case 15:
+		case 93:
+		case - 15 : case - 93 : tip = "信号中断。[" + Math.abs(rCode) + "]";
+			break;
+		case - 92 : case 92:
+			tip = "通信中断。[" + Math.abs(rCode) + "]";
+			break;
+		case 96:
+		case - 96 : tip = "系统错误，请求失败。[" + Math.abs(rCode) + "]";
+			break;
+		case 404:
+		case 415:
+			tip = "节目错误，请返回。[" + reasonCode + "]";
+			break;
+		case 411:
+		case 413:
+		case 414:
+		case 454:
+		case 456:
+		case 457:
+			tip = "系统错误，请返回。[" + reasonCode + "]";
+			break;
+		default:
+			tip = "系统繁忙，请稍后重试。[" + reasonCode + "]";
+			break
+		}
+		break;
+	case 28:
+		tip = "前端停播，请返回。";
+		break;
+	case 31:
+		tip = "无效节目，请返回。";
+		break;
+	case 32:
+		tip = "锁频信号丢失，请返回。";
+		break;
+	case 100000:
+	case 200000:
+			if(errorCode == 100000){
+					isStop = false;
+					mp.stop();
+					doConfirm();
+                    //setGlobalVar("btv_endFlag",false);
+					return;
+				//tip="节目已播放结束，请返回。";
+			}else{
+				tip ="节目已快退至开始，请返回。";
+			}
+		isStop = false;
+		mp.stop();
+		break;
+	case 100001:
+		tip = "无播放节目，请返回。";
+		break;
+	case 100002:
+		tip = "节目请求超时，请返回。";
+		break;
+	case 100003:
+		tip = "节目播放时间错误。[" + reasonCode + "]";
+		break;
+	case 100004:
+		tip = "输入时长比总时长大。";
+		isCloseWindow = true;
+		break;
+	case 100005:
+		tip = "区域码错误，请返回。[" + reasonCode + "]";
+		break;
+	default:
+		    break;
+	}
+	setGlobalVar("nextMediaListFocus","");
+    countTimer = setInterval("QuitPage()", 1000);
+	if (tip != "") $("checkoutContent").innerHTML = tip;
+	else $("checkoutContent").style.display = "none";		
+    if (colseTip != "") $("btnColse").innerHTML = colseTip;
+}
+function QuitPage() {
+	iCount--;
+	if (iCount <= 0) {
+		clearInterval(countTimer);
+		doConfirm()
+	}
+}
+function doConfirm() {
+	if (isCloseWindow) {
+		doCancel()
+	} else {
+		var returnUrl = getGlobalVar("vod_ctrl_backurl");
+		var vod_play_type = getGlobalVar("vod_play_type");
+		if (errorCode == 100000){
+			setGlobalVar("vod_play_over", 1);
+//			if(VODType!="tv"&&VODType!="news"){
+			   deleteBookMark();//节目播完后删除书签
+//			   setGlobalVar("VODType","");
+//			}		 
+//			 if(newListFlag=="true"){//新闻拆条中的一条播放完后
+//				returnUrl+="&playType=news_class";
+//			 }
+		}else {
+			setGlobalVar("vod_play_over", "");
+		}
+		setGlobalVar("vod_play_back", "error");
+		location.href = returnUrl.replaceQueryStr(getUserId(), "userId");
+        setGlobalVar('adJSON',"");
+	}
+}
+function doCancel() {
+	clearInterval(countTimer);
+	isStop = false;
+	var parameter = LocString.substr(LocString.indexOf("?") + 1);
+	location.href = "vodplay.htm?svstype=play&" + parameter
+}
+function closeVideo() {
+	if (isStop) {
+		mp.stop()
+	}
+}
+function grabDown(e) {
+	var val = e.which || e.keyCode;
+	switch (val) {
+	case ENTER_KEY:
+	case RETURN_KEY:
+		e.preventDefault();
+		doConfirm();
+		break;
+	default:
+		break
+	}
+}
+document.onkeydown = grabDown;
+document.onkeypress = function(e) {
+	var val = e.which || e.keyCode;
+	switch (val) {
+	case 768:
+		var ev = Utility.getEvent();
+		var errorCode = 0;
+		var json = jsonParse(ev);
+		if (!isNaN(json.error_code)) errorCode = parseInt(json.error_code, 10);
+		switch (errorCode) {
+		case 6:
+		case 19:
+		case 29:
+		case 33:
+			doCancel();
+                    break;
+		}
+		break;
+	default:
+		break
+	}
+}
+
+
+</script>
+
+</head>
+
+<body bgColor="transparent" onload="initPage()" onunload="closeVideo()">
+
+<div id="checkout">											<!--退出-->
+
+	<ul style="padding-left:119px;">
+
+    	<li id="btnColse"><a href="#"><img src="images/blank_btn.png" name="Image1" width="146" height="43" border="0" id="Image1" /></a></li>
+
+    </ul>
+
+</div>	
+
+<div id="checkoutContent" style=" text-align:center;">
+
+  <p> </p>
+
+  </div>
+
+<!--end_退出-->
+
+</body>
+
+</html>
+

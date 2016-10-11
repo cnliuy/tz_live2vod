@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+
+<title>回放_定位</title>
+
+<link href="css/base.css" rel="stylesheet" type="text/css" />
+
+<script src="js/common.js"></script>
+
+<script src="js/countControl.js"></script>
+
+<script src="js/timeControl.js"></script>
+
+<script src="js/voices.js"></script>
+
+<script src="js/main.js"></script>
+
+<script src="js/adp.js"></script>
+
+<script>
+
+</script>
+<!--  -->
+<link rel="stylesheet" type="text/css" href="../csss1/default.css" />
+<link rel="stylesheet" type="text/css" href="../csss1/component.css" />
+<script src="../jss1/modernizr.custom.js"></script>
+
+<script type="text/javascript">
+function cebianlan() {	
+	//alert("vod play 唤出侧边栏");
+	//alert("menuLeft:"+menuLeft.innerHTML());
+	classie.toggle( this, 'active' );
+	classie.toggle( menuLeft, 'cbp-spmenu-open' );	
+};
+</script>
+<!--  -->
+
+</head>
+
+<body onload="initPage();" bgColor="transparent" >
+<div id="p_msg" style='visibility:hidden; position:absolute; left:154px; top:53px; width:867px; height:404px; font:黑体; font-size:20px; color:#000000; background-color: #00CC33; layer-background-color: #00CC33; border: 1px none #000000; word-break: break-all; word-wrap:break-word; overflow:auto; white-space:pre-wrap;' ></div>
+<!--<div id="adtime" style="visibility:hidden;background:url(images/count.png) no-repeat;position:absolute;left:800px;top:58px;width:218px;height:58px; font:黑体; size:22px; text-align:center" ></div>-->
+<div id="adtime"
+     style="visibility:hidden; background:url(images/count1.png) no-repeat; position:absolute; left:809px; top:66px; width:204px; height:50px; font:黑体; size:22px; text-align:center"></div>
+<div id="ad_tip"
+     style=" visibility:hidden;text-align:center; position:absolute; width:177px; height:30px; left:822px; top:72px;">
+    视频加载中:<span id="ad_showtime" style="font:黑体; font-weight:bold; size:40px; color:#F00">  </span>秒
+</div>
+<div id="ad_tiptwo"
+     style=" visibility:hidden;text-align:center; position:absolute; width:177px; height:30px; left:822px; top:72px;">
+    节目即将播放
+</div>
+
+
+<div id="g_static" style="visibility:hidden;background:url(images/static_bg.png) no-repeat;position:absolute;left:220px;top:80px;width:78px;height:64px;"></div>
+
+<div id="g_track" style="visibility:hidden;background:url(images/track_bg.png) no-repeat;position:absolute;left:900px;top:63px;width:155px;height:62px;font-size:26px;line-height:62px;text-align:center;"></div>
+
+<div id="g_button"><img id="imgStatus" src="images/button_q.png" width="76" height="75" /></div>					
+
+<div id="g_speed"></div>
+
+<div id="input_box" style="visibility:hidden;">
+
+    <div id="location_bg"><img src="images/l_position.png" /></div>	
+
+    <div id="location">
+
+        <input id="txtInput" style="BACKGROUND-COLOR: Transparent; border:0px;width:100px;color:#fff;" type="text" value="" />分
+
+    </div>
+
+	<div id="locationTip" style="visibility:hidden;position:absolute;left:730px;top:324px;color:red;font-size:26px;width:260px;">
+
+       输入时间比总时间长。
+
+    </div>
+
+</div>														
+
+<div id="main">
+
+<!--end_定位时间-->																		
+
+    <p style="position:absolute;left:100px;top:488px;background:url(images/g_bg_1.png) no-repeat;width:1038px;height:162px;"></p>																								
+
+    <div id="live_p"></div>	    
+
+    <div id="begin_time">00:00:00</div>						
+
+    <div id="end_time">00:00:00</div>									
+
+    <div id="play_time">00:00:00</div>
+
+    <div id="play_program"></div>
+
+</div>	
+
+<div id="dv_voice" style="display:none;">
+
+</div>		
+<!--<div id="dv_ad" style="display:none;"><img id="adp" src="images/ad.jpg"/></div>-->
+<!--<img id="adp" style="display:none;" src="images/ad.jpg"/>-->
+<!--暂停广告-->
+<div id = "vodMidDiv">
+	<div style="position:relative;z-index:100;"  style="border:0px;">
+		<img id = "adp" border="0" style="display:none;" src="images/ad.jpg"/>
+		<div id="vodMidTip" 
+			style="position:absolute;z-index:101;left:0px;top:334px;border:0px;display:none;width:478px;
+			background-color:#999999;">
+			<img src="images/yellow-close.png" style="float:right;"/>
+			<img src="images/blue-detail.png" style="float:right;"/>
+		</div>	
+	</div>
+</div>
+<script language="javascript" type="text/javascript" 
+    src="http://10.9.218.13:9200/ads/js/adp-web-holder.js"> 
+</script>
+<script language="javascript" type="text/javascript" 
+    src="js/adp-web-init.js" > 
+</script> 
+
+
+	<div>
+		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
+			<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    频道</h3>
+			<a href="../view/index.html?lname=CCTV-1&lchannelid=6"  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    中央1</a>
+			<a href="../view/index.html?lname=CCTV-2&lchannelid=13" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    中央2</a>
+			<a href="../view/index.html?lname=CCTV-3&lchannelid=11" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    中央3</a>
+			<a href="../view/index.html?lname=CCTV-4&lchannelid=12" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    中央4</a>
+			<!--  
+			<a href="../view/index.html?lname=CCTV-5HD&lchannelid=419" >    中央5高清</a>
+			<a href="../view/index.html?lname=CCTV-6HD&lchannelid=421" >    中央6高清</a>
+			-->
+		</nav>
+		<div class="container">
+		</div>
+	</div>
+	<script src="../jss1/classie.js"></script>
+	<script>
+	var menuLeft = document.getElementById( 'cbp-spmenu-s1' ),		
+	body = document.body;
+	showLeft.onclick = function() {
+		classie.toggle( this, 'active' );
+		classie.toggle( menuLeft, 'cbp-spmenu-open' );
+		 
+	};
+	</script>
+
+
+</body>
+
+</html>
+

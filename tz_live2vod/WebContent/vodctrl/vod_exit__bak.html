@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="1280*720;text/html; charset=gb2312" />
+<title>回放_退出</title>
+<link href="css/base.css" rel="stylesheet" type="text/css" />
+<script src="js/common.js"></script>
+<script type="text/javascript">
+
+
+var isStop = false;
+var tipType = -1;
+var listFocusId = "Image1";
+var isClose = false;
+var isReturnMain = false;
+var iCount = 20;
+var mp = new MediaPlayer();
+var resourceId = getGlobalVar("resourceId");
+var programId = getGlobalVar("programId");
+var countTimer;
+function initPage() {
+	var nativePlayerInstanceId = getGlobalVar("nativePlayerInstanceId");
+	mp.bindNativePlayerInstance(nativePlayerInstanceId);
+	tipType = getIntValue(getQueryStr("tipType", LocString));
+	initDialog(tipType)
+}
+function initDialog(type) {
+	iCount = 20;
+	clearInterval(countTimer);
+	var vod_play_type = getIntValue(getGlobalVar("vod_play_type"));
+	var tip = "";
+	alert("initDialog type："+type);
+	switch (type) {
+	case 0: //退出键 && Stop键：取消所有书签
+	case 2://返回键：有书签
+		alert("返回键");
+	case 3: //暂停超时后直接退出
+/*		if (vod_play_type == 1) tip = "您正在预览，是否要退出？";
+		else tip = "是否停止播放当前节目？";
+		if (type == 2 && vod_play_type == 0 && LocString.indexOf("&endPlayTime=") >= 0) if (type == 2 && vod_play_type == 2) {
+			tip = "&nbsp;&nbsp;确定退出当前时段节目?"
+		}
+		break;*/
+		alert("暂停超时后直接退出");
+		 if (vod_play_type == 1){
+			 tip = "您正在预览，是否要退出？";
+		 }else{
+                 tip = "&nbsp;&nbsp;是否停止播放当前节目？";
+             }
+		 break;
+	case 1:
+            if(getGlobalVar("qflag")=="0"){
+                tip = "是否退出并返回首页？"
+            }else{
+                tip = "是否退出并返回主页？"
+            }
+		break;		
+	case 10000:
+		tip = "请插入卡，<span id=\"spCount\" style=\"color:#ffffff;\">" + iCount + "</span> 秒后自动退出。";
+		$("Image2").src = "images/c_quit.png";
+		break;
+	case 200000:
+		alert("case 200000");
+		tip = "节目已快退至开始。<br/>按【确认】返回<br/>按【取消】重播";
+		mp.pause();
+		$("checkoutContent").style.top = "320px";
+		break;
+	default:
+		break
+	}
+	setGlobalVar("nextMediaListFocus","");
+	countTimer = setInterval("QuitPage()", 1000);
+	if (tip != "") $("checkoutContent").innerHTML = tip
+}
+function closeVideo() {
+	if (isStop) {
+		$("checkoutContent").visibility = "hidden";
+        if(rtsp.indexOf("^^^") > 0){
+            AppManager.invoke("TVRating", "addAction", "{\"action\":\"vodPlay\",\"data\":[\"E1\",\""+decodeURI(rtsp)+"\",\"E2\",\"0\",\"E3\",\"0\",\"E4\",\""+mp.getCurrentPlayTime()+"\",\"E5\",\"9\",\"D1\",\"0003\",\"D2\",\""+encodeURI(decodeURIComponent(getGlobalVar("displayName")))+"\",\"D3\",\"0\",\"T\",\"V\"]}");
+        }else{
+            AppManager.invoke("TVRating", "addAction", "{\"action\":\"vodPlay\",\"data\":[\"E1\",\""+decodeURI(rtsp)+"\",\"E2\",\"0\",\"E3\",\"0\",\"E4\",\""+mp.getCurrentPlayTime()+"\",\"E5\",\"9\",\"D1\",\"0002\",\"D2\",\""+encodeURI(decodeURIComponent(getGlobalVar("displayName")))+"\",\"D3\",\"0\",\"T\",\"V\"]}");
+        }
+		mp.stop()
+	}
+}
+var VODType=getGlobalVar("VODType");//播放的节目类型 vod tv news
+function saveBooks(){
+
+	var endPlayTime = getQueryStr("endPlayTime", LocString);
+	var saleType  = getGlobalVar("saleType");
+    if(VODType!="tv"){
+	if (endPlayTime != "" &&　saleType!="99") {   //免费不记录书签
+			saveBookMark(endPlayTime);//退出播放时保存书签
+	}
+ }
+}
+
+function QuitPage() {
+	iCount--;
+	var obj = $("spCount");
+	if (obj != null) obj.innerText = iCount;
+	if (iCount <= 0) {
+		clearInterval(countTimer);
+		if (tipType == 3 || tipType == 200000) doConfirm(2);
+		else enterCanel()
+	}
+}
+function doConfirm(type) {
+	if (getGlobalVar("vod_ctrl_isFastRewindBack") == "Y") setGlobalVar("vod_ctrl_isFastRewindBack", "");
+	isStop = true;
+	var returnUrl = "";
+	if (type == 1){
+        saveBooks();
+        if(getGlobalVar("qflag")=="0"){
+            returnUrl = getGlobalVar("PORTAL_INDEX");
+            setGlobalVar("qflag","");
+        }else{
+            returnUrl = getGlobalVar("PORTAL_ADDR");
+        }
+	}else {
+		returnUrl = getGlobalVar("vod_ctrl_backurl");
+		if (type == 2) {
+			saveBooks();
+			var endPlayTime = getQueryStr("endPlayTime", LocString);
+			var backurl = returnUrl.replaceQueryStr(endPlayTime, "vod_ctrl_breakpoint");
+			returnUrl = backurl;
+		}
+		returnUrl = returnUrl.replaceQueryStr(getUserId(), "userId");
+	}
+	if (returnUrl == "") {
+		if (isClose) window.close();
+		setContent("返回地址有误。[type=" + type + "]");
+		isClose = true;
+	} else {
+		setGlobalVar("vod_play_over", "");
+		setGlobalVar("vod_play_back", "Y");
+		setGlobalVar("is_play_back", "Y");
+		setGlobalVar("isAutoPlay","");
+		location.href = returnUrl;
+	}
+	setGlobalVar('adJSON', "")
+}
+function doCancel(cStatus) {
+	var parameter = LocString.substr(LocString.indexOf("?") + 1);
+	if (cStatus >= 0) parameter = parameter.replaceQueryStr(cStatus, "currentStatus");
+	location.href = "vodplay.htm?svstype=play&" + parameter
+}
+function setContent(str) {
+	$("checkoutContent").style.visibility = "visible";
+	$("checkoutContent").innerHTML = str
+}
+function insertCA() {
+	var cardId = getSmartCardId();
+	if (cardId == "") return;
+	var oldCardId = getGlobalVar("currentSmartCardId");
+	if (cardId != oldCardId) {
+		isReturnMain = true;
+		clearInterval(countTimer);
+		setContent("插入卡不相同，确定返回主页。")
+	} else {
+		mp.resume();
+		doCancel(0)
+	}
+}
+function pulloutCA() {
+	mp.pause();
+	tipType = 10000;
+	initDialog(tipType)
+}
+function enterCanel() {
+	if (tipType == 10000) doConfirm(2);
+	else doCancel( - 1)
+}
+document.onkeydown = function(e) {
+	var val = e.which || e.keyCode;
+	switch (val) {
+	case FORWARD_KEY:
+		if (listFocusId == "Image1") {
+			listFocusId = "Image2";
+			var obj = $("Image2");
+			obj.src = obj.src.replace(".png", "_s.png");
+			obj = $("Image1");
+			obj.src = obj.src.replace("_s.png", ".png")
+		}
+		break;
+	case REWIND_KEY:
+		if (listFocusId == "Image2") {
+			listFocusId = "Image1";
+			var obj = $("Image1");
+			obj.src = obj.src.replace(".png", "_s.png");
+			obj = $("Image2");
+			obj.src = obj.src.replace("_s.png", ".png")
+		}
+		break;
+	case ENTER_KEY:
+		if (listFocusId == "Image1") {
+			if (tipType != 10000) doConfirm(tipType);
+			else if (isReturnMain) doConfirm(1)
+		} else enterCanel();
+		break;
+	case STOP_KEY:
+		e.preventDefault();
+		break;
+	case QUIT_KEY:
+	case RETURN_KEY:
+		e.preventDefault();
+		enterCanel();
+		break;
+	case KEY_HOMEPAGE:
+		e.preventDefault();
+		isStop = true;
+		tipType = 1;
+		initDialog(tipType);
+		break;
+	default:
+		break
+	}
+}
+document.onkeypress = function(e) {
+	var code = e.keyCode || e.which;
+	switch (code) {
+	case DVB.EVT_TYPE_CA_ALARM:
+		var evt = DVB.getEvent(DVB.EVT_TYPE_CA_ALARM);
+		if (evt.msgSubType == 0) insertCA();
+		else if (evt.msgSubType == 1) pulloutCA();
+		break;
+	default:
+		break
+	}
+}
+
+
+//-->
+
+
+
+</script>
+
+
+
+</head>
+
+
+
+<body onload="initPage()" onunload="closeVideo()" bgColor="transparent">
+
+
+
+<div id="exit">																						<!--退出-->
+
+
+
+	<ul>
+
+
+
+    	<li><img src="images/y_button_s.png" name="Image1" width="101" height="43" border="0" id="Image1" /></li>
+
+        <li><img src="images/c_button.png" name="Image2" width="102" height="44" border="0" id="Image2" /></li>
+
+
+
+    </ul>
+
+
+
+</div>		
+
+
+
+<div id="checkoutContent" style=" text-align:center;">
+
+
+
+  <p></p>
+
+
+
+</div>																						
+
+
+
+<!--end_退出-->
+
+
+
+</body>
+
+
+
+</html>

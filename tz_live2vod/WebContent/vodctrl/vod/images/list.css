@@ -1,0 +1,78 @@
+body {
+	font-size: 24px; color:#ffffff; font-family:"ºÚÌå"; background: url(ny_bg.jpg) no-repeat top left;
+}
+body,ul,li,form{ margin:0; padding:0;}
+ul,li{ list-style:none;}
+a{	color:#fff;	text-decoration: none;}
+a:hover{ color:#ffc100}
+img{ border:0;}
+
+#list_left_menu {
+	position:absolute;
+	left:74px;
+	top:156px;
+	width:351px;
+	height:300px; 
+}
+#list_left_menu a{ height:50px; line-height:50px; padding-left:15px; display:block; font-size:26px;}
+#list_left_menu a:hover{background:url(list_menu_bg.png) no-repeat left;}
+#logo {
+	position:absolute;
+	left:51px;
+	top:625px;
+	width:89px;
+	height:50px;
+}
+#notice {
+	position:absolute;
+	left:611px;
+	top:658px;
+	width:598px;
+	height:34px; text-align:right;
+}
+#list_page {
+	position:absolute;
+	left:73px;
+	top:569px;
+	width:351px;
+	height:38px; text-align:center; color:#3a617d;
+}
+#list_content {
+	position:absolute;
+	left:477px;
+	top:130px;
+	width:388px;
+	height:429px; line-height:42px;
+}
+#list_pic {
+	position:absolute;
+	left:888px;
+	top:162px;
+	width:298px;
+	height:422px;
+}
+#list_title {
+	position:absolute;
+	left:297px;
+	top:45px;
+	width:173px;
+	height:45px; font-size:30px; color:#006d71;
+}
+#top_menu {
+	position:absolute;
+	left:485px;
+	top:49px;
+	width:728px;
+	height:30px; font-size:26px;
+}
+#top_menu li{ width:140px; float:left; display:block; text-align:center}
+#guang {
+	position:absolute;
+	left:714px;
+	top:85px;
+	width:157px;
+	height:20px;
+	z-index:1;
+}
+li.yellow {color: #ffc100;font-size:28px;width:160px;}
+.blue {color: #00ffff}
